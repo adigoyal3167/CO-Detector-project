@@ -2,8 +2,15 @@
 #include <RF24/RF24.h>
 #include "RF24/nRF24L01.h"
 #include <stdio.h>
+//#include<wiringPi.h>
+//#include "GPIOClass.h"
+
 using namespace std;
 
+//extern int wiringPiSetup();
+//extern int wiringPiSetupGpio();
+//extern void pinMode(int pin,int mode);
+//extern void digitalWrite(int pin,int value);
 extern void lcd_init();
 extern void lcdLoc(int);
 extern void ClrLcd(void);
@@ -36,10 +43,15 @@ int main()
 	char ard[8];
 	char str[16];
 	setup();
+//	wiringPiSetup();
+//	wiringPiSetupGpio();
+//	pinMode(26,OUTPUT);
+//	digitalWrite(26,LOW);
 lcd_init();	
 cout<<"i am here\n";
 	while(true)
 	{
+//		digitalWrite(26,LOW);
 
 		if(radio.available())
 		{
@@ -52,16 +64,20 @@ cout<<"i am here\n";
 				p[ps] = '\0';
 				cout<<"CO value : "<<p<<endl;
 				sscanf(p,"%s = %d:%d",&ard,&val,&lim);
-				sprintf(str,"co : %d",val);
-				line_lcd(0x80,str);
-			//	strcpy(p,p+11);
+				sprintf(str,"co value:%d",val);
+				line_lcd(0x80,ard);
+			        line_lcd(0xC0,str);
+		//	strcpy(p,p+11);
 			//	printf("%s\n",p);
 			//	sscanf(p,"%d:%d",&val,&lim);
 				printf("%s %d %d\n",ard,val,lim);
-				if(val > 110)
-				{
-					printf("CO LEVEL > 200 now..\n");
+				if(val > 150)
+				{ 
+
+			//		digitalWrite(26,HIGH);
+					printf("CO LEVEL > dangerous now..\n");
 					printf("arduino num : %s\n",ard);
+		//			delay(1000);
 				}
 			}
 		}
