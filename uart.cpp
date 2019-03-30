@@ -5,16 +5,30 @@
 #include<string.h>
 #include<wiringPi.h>
 
-	void my_delay_func(long DELAY_TIME)
+#define 	DELAY_TIME	500000000	
+
+void my_delay_func(long DELAY)
 {
-for (long jj=0; jj <= DELAY_TIME; jj++);
+for (long jj=0; jj <= DELAY; jj++);
 }
 int main()
 {
    int file, count;
    char buf[10];
+   char msg_cmd0[] = "AT";
    char msg_cmd1[] = "AT+CSCA=\"15149931123\"";
    char msg_cmd2[] = "AT+CMGS=\"14377796894\""; 
+
+   //confirm command strings
+   printf(msg_cmd0);
+   printf("\n\r");
+   printf(msg_cmd1);
+   printf("\n\r");
+   printf(msg_cmd2);
+   printf("\n\r");
+
+   // open UART channel, specify protocol
+   printf("opening communication channel...\n\r");
    if ((file = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY))<0){
       perror("UART: Failed to open the device.\n");
       return -1;
@@ -26,13 +40,24 @@ int main()
    tcflush(file, TCIFLUSH);
    tcsetattr(file, TCSANOW, &options);
 
-   // send msg cmd1 to gsm module (open message centre)
-   if (count = write(file,msg_cmd1,strlen(msg_cmd1))<0){
+   // send mesg cmd0
+   printf("sending AT for OK confirmation... \n\r");
+   if ((count = write(file,msg_cmd0,strlen(msg_cmd0)))<0){
+	perror("UART: failed to get OK confirmation\n\r");
+	return -1;
+   }
+  write(file, "\r", 1);
+  my_delay_func(DELAY_TIME);
+
+
+   // send msg cmd1 to gsm module: (open message centre)
+   printf("sending first command message...\n\r");
+   if ((count = write(file,msg_cmd1,strlen(msg_cmd1)))<0){
       perror("UART: Failed to write to the output\n");
       return -1;
    }
-   write(file, "\n\r", 2);
-my_delay_func(2000000);
+   write(file, "\r", 1);
+   my_delay_func(DELAY_TIME);
    //read(file,buf,10);
 
   // fprintf(file,"%s\n",msg_cmd1);
@@ -43,24 +68,21 @@ my_delay_func(2000000);
   
 
  // send msg cmd2 to gsm module (specifies recipient)
-if ((count = write(file,msg_cmd2,sizeof(msg_cmd2)))<0){
+   printf("sending second command message...\n\r"); 
+   if ((count = write(file,msg_cmd2,strlen(msg_cmd2)))<0){
       perror("UART: Failed to write to the output\n");
       return -1;
    }
-   write(file, "\n\r", 2);
- my_delay_func(2000000);
+   write(file, "\r", 1);
+   my_delay_func(DELAY_TIME);
 
  // send the actual msg 
-if ((count = write(file,"how are you",20))<0){
+   printf("sending the actual message...\n\r"); 
+   if ((count = write(file,"hy",2))<0){
       perror("UART: Failed to write to the output\n");
       return -1;
    }
-   write(file, "\n\r", 2);
-
- write(file, "\n\r", 2);
- write(file, "\n\r", 2);
-
+   write(file, "\r", 1);
    close(file);
    return 0;
 }
-
