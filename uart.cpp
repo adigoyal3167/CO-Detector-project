@@ -4,20 +4,31 @@
 #include<termios.h>
 #include<string.h>
 #include<wiringPi.h>
+#include<stdlib.h>
 
-#define 	DELAY_TIME	500000000	
+#define 	DELAY_TIME	50000000	
 
 void my_delay_func(long DELAY)
 {
 for (long jj=0; jj <= DELAY; jj++);
 }
+
+void append(char *s,char c)
+{
+	int len= strlen(s);
+	s[len]=c;
+	s[len+1]='\0';
+}
 int main()
 {
    int file, count;
    char buf[10];
-   char msg_cmd0[] = "AT";
-   char msg_cmd1[] = "AT+CSCA=\"15149931123\"";
-   char msg_cmd2[] = "AT+CMGS=\"14377796894\""; 
+   char msg_cmd0[100] = "AT";
+   char msg_cmd1[100] = "AT+CSCA=\"+15149931123\"";
+   char msg_cmd2[100] = "AT+CMGS=\"+14377796894\"";
+   char msg[100]="Hi all";
+   char temp = 0;
+   
 
    //confirm command strings
    printf(msg_cmd0);
@@ -30,7 +41,7 @@ int main()
    // open UART channel, specify protocol
    printf("opening communication channel...\n\r");
    if ((file = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY))<0){
-      perror("UART: Failed to open the device.\n");
+      perror("UART: Failed to open the device.\n\r");
       return -1;
    }
    struct termios options;
@@ -78,11 +89,31 @@ int main()
 
  // send the actual msg 
    printf("sending the actual message...\n\r"); 
-   if ((count = write(file,"hy",2))<0){
-      perror("UART: Failed to write to the output\n");
-      return -1;
-   }
-   write(file, "\r", 1);
-   close(file);
-   return 0;
+//   append(msg,'\032');
+//   append(msg,'\x1A');
+	temp = strlen(msg);
+	msg[temp] = (char) 26;
+//	msg[temp+1]='\r';
+//	msg[temp+2]=26;
+	msg[temp+1] = '\0';
+	printf("%s",msg);
+    if ((count = write(file,msg,strlen(msg)))<0){
+	    perror("UART: Failed to write to the output\n");
+	   return -1;
 }
+/*
+   write(file, "0x1A", 1);
+   write(file, "0x0D", 1);
+   write(file, "0x0A", 1);
+  */
+
+//	temp = 26;
+
+ //  printf("byte : %d\n",write(file,(char*)&temp, (temp)));
+
+ close(file);
+   
+   return 0;
+
+}
+
