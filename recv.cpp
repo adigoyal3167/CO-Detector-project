@@ -4,17 +4,19 @@
 	//NRF24L01 is a hadder file in RF24 library 
 	#include "RF24/nRF24L01.h"
 	#include <stdio.h>
+#include<string.h>
 
 	using namespace std;
 
 	//calling external functions of valve(CO valve), uart(function) and LCD. 
 	extern void valve_off_function();
+//	extern void valve_on_function();
 	extern void gsm_function();
 	extern void lcd_init();
 	extern void lcdLoc(int);
 	extern void ClrLcd(void);
 	extern void typeln(const char *);
-
+        char device[15]="\0";
 	//this is define the line and characters used in display (lcd).
 	void line_lcd(char line,char *str)
 	{
@@ -46,6 +48,9 @@
 
 	char ard[8];
 	char str[16];
+	
+      // digitalWrite(0, LOW);
+	
 	setup();
         lcd_init();	
 	//printing message I am here to show that RF module is working and wait for 
@@ -77,17 +82,29 @@
 	//in which we call GSM function which send message to user 
 	//we print values on LCD 
 	//we also call valve off function which turf off the valve to stop the gas from furnace. 
-	if(val > 120)
+	if(val > 110)
 	{ 
+	strcpy(device,ard);
 	gsm_function();
 	printf ("  CO LEVEL is Dangerous now..\n");
 	printf ("arduino num:%s\n",ard);
+//	valve_off_function();
+	}
+          if(val > 180)
+	{
+//	gsm_function();
+//	printf (" CO LEVEL is Dangerous now valve is shutt down..\n");
+//	printf ("arduino num:%s\n",ard);	
 	valve_off_function();	
 	}
+/*	if(val < 180)
+	{
+	valve_on_function();
+	}
+*/	}
 	}
 	}
-	}
-	//return 0;
+	return 0;
 	}
 
 

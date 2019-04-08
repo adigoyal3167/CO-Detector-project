@@ -7,6 +7,8 @@
 	#include<stdlib.h>
 	#define 	DELAY_TIME	5000000
 
+extern char device[15];
+
 
 	// add delay function 
 	void my_delay_func(long DELAY)
@@ -30,10 +32,11 @@
 	// AT command to type user number 
 	char msg_cmd2[100] = "AT+CMGS=\"+14377796894\"";
 	// message type after writing user number
+	
 	char msg[100]="CO is reached at dangerous level   ";
 	char temp = 0;
 
-
+	sprintf(msg,"%s  %s",device,"CO is reached at dangerous level   ");
 
 //-- 	wiringPiSetupGpio();	*/
 	
