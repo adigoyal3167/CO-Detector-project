@@ -4,13 +4,12 @@
 	//NRF24L01 is a hadder file in RF24 library 
 	#include "RF24/nRF24L01.h"
 	#include <stdio.h>
-#include<string.h>
+	#include<string.h>
 
 	using namespace std;
 
 	//calling external functions of valve(CO valve), uart(function) and LCD. 
-	extern void valve_off_function();
-//	extern void valve_on_function();
+	extern void valve_on_off_function();
 	extern void gsm_function();
 	extern void lcd_init();
 	extern void lcdLoc(int);
@@ -56,6 +55,7 @@
 	//printing message I am here to show that RF module is working and wait for 
 	//getting response from other side (Arduino's NRF24L01)
 	cout<<"i am here\n";
+//	line_lcd(0x80,"Hi there");
 	while(true)
 	{
 	//if the statement is working then program will run if condition otherwise not.
@@ -95,7 +95,7 @@
 //	gsm_function();
 //	printf (" CO LEVEL is Dangerous now valve is shutt down..\n");
 //	printf ("arduino num:%s\n",ard);	
-	valve_off_function();	
+	valve_on_off_function();	
 	}
 /*	if(val < 180)
 	{
