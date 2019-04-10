@@ -5,7 +5,8 @@
 #include<string.h>
 #include<wiringPi.h>
 #include<stdlib.h>
-#define 	DELAY_TIME	50000000
+#define 	DELAY_TIME	50000000	
+using namespace std;
 
 
 
